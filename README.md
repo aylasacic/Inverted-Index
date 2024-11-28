@@ -49,4 +49,44 @@ This stage involves preprocessing the raw documents to remove unwanted elements 
 #### 2. Document Merging
 
 Combining all cleaned documents into a single file for streamlined processing. The merged file is formatted as:
+[filename.txt] [Title] [Content]
+
+
+All fields are tab-separated.
+
+#### 3. MapReduce for Word Counts
+
+Utilizes the MapReduce paradigm to process the merged documents and produce word counts. The output includes:
+
+- **Filename**
+- **Title**
+- **Target Word**
+- **Target Word Frequency Count**
+- **All Contexts Related to the Word**
+
+#### 4. Creating the Inverted Index
+
+Transforms the MapReduce output into an inverted index using Python's `pickle` module. The inverted index is stored as a dictionary, allowing efficient search operations based on input words.
+
+Additionally, this stage computes the total word count for each file, which is essential for TF-IDF calculations.
+
+#### 5. Searching the Inverted Index
+
+Provides functionality to search the inverted index using either a simple or rich user interface.
+
+## How to Run the Project
+
+### Prerequisites
+
+- **Python 3.x** installed on your system.
+- Access to the command line or terminal.
+
+### Running the Search
+
+You can perform searches using two different interfaces:
+
+1. **Simple Search (Simple UI):**
+
+   ```bash
+   python3 simpleSearch.py
 
