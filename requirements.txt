@@ -1,0 +1,5 @@
+nltk>=3.8.1
+mrjob>=0.7.4
+rich>=13.4.4
+pyfiglet>=0.8.post1
+tqdm>=4.65.0
