@@ -1,92 +1,113 @@
-# Inverted Index Project
 
-**Ajla Šačić**  
+# Assignment 4: Inverted Index
 
-## Table of Contents
+## Author
+Ajla Šačić
 
-- [Project Description](#project-description)
-  - [Stages](#stages)
-    1. [Document Cleaning](#1-document-cleaning)
-    2. [Document Merging](#2-document-merging)
-    3. [MapReduce for Word Counts](#3-mapreduce-for-word-counts)
-    4. [Creating the Inverted Index](#4-creating-the-inverted-index)
-    5. [Searching the Inverted Index](#5-searching-the-inverted-index)
-- [How to Run the Project](#how-to-run-the-project)
-  - [Prerequisites](#prerequisites)
-  - [Running the Search](#running-the-search)
-  - [Running the Project From Scratch](#running-the-project-from-scratch)
-    1. [Create a Virtual Environment](#1-create-a-virtual-environment)
-    2. [Install Dependencies](#2-install-dependencies)
-    3. [Run the Inverted Index Pipeline](#3-run-the-inverted-index-pipeline)
-       - [3.1 Clean the Documents](#31-clean-the-documents)
-       - [3.2 Combine the Files](#32-combine-the-files)
-       - [3.3 Run the MapReduce](#33-run-the-mapreduce)
-       - [3.4 Create the Inverted Index](#34-create-the-inverted-index)
-       - [3.5 Get the Number of Words in Each File](#35-get-the-number-of-words-in-each-file)
+## Course
+Special Topics in Computer Science: Big Data Systems  
+CS-UH 3260 Fall 2024
 
 ## Project Description
+This project involves building an inverted index pipeline in several stages:
+1. **Document Cleaning**:  
+   - Removing subtitles (text surrounded by `=` symbols)  
+   - Removing wikitables  
+   - Removing references and 'see also' sections  
+   - Removing any HTML and XML tags  
+   - Separating punctuation connected to words  
 
-The **Inverted Index Project** is designed to process a large set of documents and create an efficient search mechanism using an inverted index. The project is divided into several stages to ensure modularity, error checking, and ease of maintenance.
+2. **Document Merging**:  
+   - Adding all files into a single file  
+   - Formatting as `[filename.txt] [Title] [Content]`, all tab-separated  
 
-### Stages
+3. **MapReduce for Word Counts**:  
+   - Input: Combined file  
+   - Output:  
+     - `filename`  
+     - `title`  
+     - `target word`  
+     - `target word frequency count`  
+     - `all contexts related to the word`  
 
-1. **Document Cleaning**
-2. **Document Merging**
-3. **MapReduce to Get Word Counts**
-4. **Creating the Inverted Index**
-5. **Searching the Inverted Index**
+4. **Creating the Inverted Index**:  
+   - Uses `pickle` to store a searchable dictionary of words.  
 
-#### 1. Document Cleaning
+5. **Searching the Inverted Index**:  
+   - Options for a simple or rich search UI.  
 
-This stage involves preprocessing the raw documents to remove unwanted elements and prepare them for analysis. The cleaning process includes:
+## How to Run the Search
+### Simple Search (Simple UI):
+```bash
+python3 simpleSearch.py
+```
 
-- **Removing Subtitles**: Text surrounded by `=` symbols.
-- **Removing Wikitables**: Tables used in wiki markup.
-- **Removing References and 'See Also' Sections**: These sections often contain non-essential information.
-- **Removing HTML and XML Tags**: Stripping any embedded markup.
-- **Separating Punctuation**: Ensuring punctuation is separated from words for accurate tokenization.
+### Rich Search (More Complex UI):
+```bash
+python3 richSearch.py
+```
 
-#### 2. Document Merging
-
-Combining all cleaned documents into a single file for streamlined processing. The merged file is formatted as:
-[filename.txt] [Title] [Content]
-
-
-All fields are tab-separated.
-
-#### 3. MapReduce for Word Counts
-
-Utilizes the MapReduce paradigm to process the merged documents and produce word counts. The output includes:
-
-- **Filename**
-- **Title**
-- **Target Word**
-- **Target Word Frequency Count**
-- **All Contexts Related to the Word**
-
-#### 4. Creating the Inverted Index
-
-Transforms the MapReduce output into an inverted index using Python's `pickle` module. The inverted index is stored as a dictionary, allowing efficient search operations based on input words.
-
-Additionally, this stage computes the total word count for each file, which is essential for TF-IDF calculations.
-
-#### 5. Searching the Inverted Index
-
-Provides functionality to search the inverted index using either a simple or rich user interface.
-
-## How to Run the Project
-
-### Prerequisites
-
-- **Python 3.x** installed on your system.
-- Access to the command line or terminal.
-
-### Running the Search
-
-You can perform searches using two different interfaces:
-
-1. **Simple Search (Simple UI):**
-
+## How to Run the Project From Scratch
+1. **Create a new environment**:
    ```bash
-   python3 simpleSearch.py
+   python -m venv venv
+   ```
+   Activate the virtual environment:  
+   - On Windows:  
+     ```bash
+     venv\Scripts\activate
+     ```
+   - On macOS/Linux:  
+     ```bash
+     source venv/bin/activate
+     ```
 
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Run the inverted index pipeline**:
+   ```bash
+   python3 processFiles.py --run_mapreduce --build_inverted_index
+   ```
+
+   Alternatively, execute each step separately:
+
+   ### Step 3.1: Clean the documents
+   ```bash
+   python3 preprocess.py -i [--input_dir] INPUT_DIR -o [--output_dir] OUTPUT_DIR
+   ```
+   Output: Directory called `OUTPUT_DIR` containing cleaned files.
+
+   ### Step 3.2: Combine the files into one
+   ```bash
+   python3 combine_files.py -i [--input_dir] INPUT_DIR -o [--output_file] OUTPUT_FILE
+   ```
+   Output: Single file `OUTPUT_FILE` containing all documents.
+
+   ### Step 3.3: Run the MapReduce
+   ```bash
+   python3 mapReduceWordCount.py combined_documents.txt > word_counts.txt
+   ```
+   Output: `word_counts.txt` with word counts per file, including contexts.
+
+   ### Step 3.4: Create the Inverted Index
+   ```bash
+   python3 invertedIndex.py --input_file word_counts.txt --output_file inverted_index.pkl
+   ```
+
+   ### Step 3.5: Get the total word count for each file
+   ```bash
+   python3 countWords.py -i [--input_dir] INPUT_DIR -o [--output_file] OUTPUT_FILE
+   ```
+
+4. **Run the Search**:
+   - Simple UI:  
+     ```bash
+     python3 simpleSearch.py
+     ```
+   - Rich UI:  
+     ```bash
+     python3 richSearch.py
+     ```
