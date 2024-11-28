@@ -4,10 +4,6 @@
 ## Author
 Ajla Šačić
 
-## Course
-Special Topics in Computer Science: Big Data Systems  
-CS-UH 3260 Fall 2024
-
 ## Project Description
 This project involves building an inverted index pipeline in several stages:
 1. **Document Cleaning**:  
